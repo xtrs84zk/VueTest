@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="./css/product_style.css">
+    <meta name="viewport" content="width=device-width">
+    </meta>
+    <title>Product App</title>
+</head>
+
+<body>
+    <script src="vue.js"></script>
+    <div id="app">
+        <!-- Se define el id app que Vue usará para anclarse a ésta parte del documento -->
+        <div class="product">
+            <div class="product-image">
+                <img :src="image">
+            </div>
+            <div class="product-info">
+                <h1> {{ product }}</h1> <!-- Acceder a una prop en el id (app en este caso) -->
+                <p> {{ description }} </p>
+                <p :style="inStock? ' ' : noStockClass ">The item is on sale.</p> <!-- Ejecutar verificación de if con base en el id-->
+                <!-- Altera la propiedad css "visible" con base en el inventario-->
+                <p v-show="inventory<=10 && inventory >0">Almost sold out.</p>
+
+
+                <div>
+                    <!-- Escucha a un clic y ejecuta "addToCart", se deshabilita en caso de que inStock sea falso y se aplica la clase disabled en el mismo caso -->
+                    <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Add to
+                        cart </button>
+                    <!-- Botón con un listener para clics que agrega a la carta -->
+                    <!-- <button @click="unAddToCart">Unadd to cart</button> this was just a test-->
+                </div>
+
+                <div class="cart">
+                    <p> {{ cart }}</p> <!-- Se concatena el valor de cart (dentro de app -> Vue) -->
+                </div>
+                <h2> Details: </h2>
+                <ul>
+                    <!-- Se llenan los elementos de una lista con base en el contenido de details -->
+                    <li v-for="detail in details">{{ detail }}</li>
+                </ul>
+
+                <h2> Variants: </h2>
+                <!-- Un for que muestra cada variante -->
+                <!-- Se mantiene una llave como referencia (:key) -->
+                <div v-for="variant in variants" :key="variant.variantId" class="color-box"
+                    :style="{ backgroundColor : variant.variantColor }">
+                    <!-- Se accede a un prop del elemento variant, siendo este variantColor | se escucha a un mouseover para llamar a la función-->
+                    <p @mouseover="updateProduct(variant.variantImage)">.</p>
+                </div>
+
+                <h2> Available sizes: </h2>
+                <!-- Se inicia una lista desordenada -->
+                <ul>
+                    <!-- For each, se mantiene la clave y se llenan los elementos de la lista -->
+                    <li v-for="size in sizes" :key="size.sizeId"> {{ size.sizeName }}</li>
+                </ul>
+                <a :href="link">View the link</a> <!-- Shorthand notation para completar un href con base en un prop-->
+            </div>
+        </div>
+    </div>
+
+
+    <script src="main.js"></script>
+</body>
+
+</html>
