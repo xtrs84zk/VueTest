@@ -4,6 +4,7 @@
 var app = new Vue({
     el: '#app', //Se define qué etiqueta utilizará Vue para anclarse en el DOM
     data: { //En esta parte va la información cruda.
+        brand: 'Vue Mastery',
         product: 'Socks',
         description: "It's a sock",
         image: './assets/image.png',
