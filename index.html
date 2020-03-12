@@ -11,16 +11,18 @@
 <body>
     <!-- <script src="vue.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <div id="app">
+    <div id="app" class="nav-bar">
         <!-- Se define el id app que Vue usará para anclarse a ésta parte del documento -->
         <div class="product">
             <div class="product-image">
                 <img :src="image">
             </div>
             <div class="product-info">
+                <br/> <!-- Acomodando el espacio de forma rápida -->
                 <h1> {{ product }}</h1> <!-- Acceder a una prop en el id (app en este caso) -->
                 <p> {{ description }} </p>
-                <p :style="inStock? ' ' : noStockClass ">The item is on sale.</p> <!-- Ejecutar verificación de if con base en el id-->
+                <p :style="inStock? ' ' : objectStyle ">The item is on sale.</p>
+                <!-- Ejecutar verificación de if con base en el id-->
                 <!-- Altera la propiedad css "visible" con base en el inventario-->
                 <p v-show="inventory<=10 && inventory >0">Almost sold out.</p>
 
@@ -45,10 +47,12 @@
                 <h2> Variants: </h2>
                 <!-- Un for que muestra cada variante -->
                 <!-- Se mantiene una llave como referencia (:key) -->
-                <div v-for="variant in variants" :key="variant.variantId" class="color-box"
-                    :style="{ backgroundColor : variant.variantColor }">
-                    <!-- Se accede a un prop del elemento variant, siendo este variantColor | se escucha a un mouseover para llamar a la función-->
-                    <p @mouseover="updateProduct(variant.variantImage)">.</p>
+                <!-- Se accede a un prop del elemento variant, siendo este variantColor -->
+                <!-- se escucha a un mouseover para llamar a la función -->
+                <div v-for="variant in variants" :key="variant.variantId" class="color-box" :style="{ backgroundColor : variant.variantColor }"
+                    @mouseover="updateProduct(variant.variantImage)">
+
+
                 </div>
 
                 <h2> Available sizes: </h2>
@@ -57,7 +61,6 @@
                     <!-- For each, se mantiene la clave y se llenan los elementos de la lista -->
                     <li v-for="size in sizes" :key="size.sizeId"> {{ size.sizeName }}</li>
                 </ul>
-                <a :href="link">View the link</a> <!-- Shorthand notation para completar un href con base en un prop-->
             </div>
         </div>
     </div>
