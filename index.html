@@ -19,13 +19,13 @@
             </div>
             <div class="product-info">
                 <br/> <!-- Acomodando el espacio de forma rápida -->
-                <h1> {{ product }}</h1> <!-- Acceder a una prop en el id (app en este caso) -->
+                <h1> {{ title }}</h1> <!-- Acceder a una propiedad computada -->
                 <p> {{ description }} </p>
                 <p :style="inStock? ' ' : objectStyle ">The item is on sale.</p>
                 <!-- Ejecutar verificación de if con base en el id-->
                 <!-- Altera la propiedad css "visible" con base en el inventario-->
                 <p v-show="inventory<=10 && inventory >0">Almost sold out.</p>
-
+                <p>{{ itemOnSale }}</p>
 
                 <div>
                     <!-- Escucha a un clic y ejecuta "addToCart", se deshabilita en caso de que inStock sea falso y se aplica la clase disabled en el mismo caso -->
@@ -49,8 +49,8 @@
                 <!-- Se mantiene una llave como referencia (:key) -->
                 <!-- Se accede a un prop del elemento variant, siendo este variantColor -->
                 <!-- se escucha a un mouseover para llamar a la función -->
-                <div v-for="variant in variants" :key="variant.variantId" class="color-box" :style="{ backgroundColor : variant.variantColor }"
-                    @mouseover="updateProduct(variant.variantImage)">
+                <div v-for="(variant, index) in variants" :key="variant.variantId" class="color-box" :style="{ backgroundColor : variant.variantColor }"
+                    @mouseover="updateProduct(index)">
 
 
                 </div>
