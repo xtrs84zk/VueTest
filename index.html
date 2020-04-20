@@ -12,10 +12,12 @@
     <!-- <script src="vue.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <div id="app" class="nav-bar">
+        <br /> <!-- Acomodando el espacio de forma rápida -->
+        <div class="cart">
+            <p> Cart: ({{ cart.length }})</p> <!-- Se concatena el valor de cart (dentro de app -> Vue) -->
+        </div>
         <!-- Se define el id app que Vue usará para anclarse a ésta parte del documento -->
-        <product :premium="premium"></product>
-        <product></product>
-        <product></product>
+        <product :premium="premium" @add-to-cart="updateCart" @un-add-to-cart="removeCart"></product>
     </div>
 
 

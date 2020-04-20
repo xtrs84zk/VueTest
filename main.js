@@ -12,7 +12,6 @@ Vue.component('product', {
         <img :src="image">
     </div>
     <div class="product-info">
-        <br /> <!-- Acomodando el espacio de forma rápida -->
         <h1> {{ title }}</h1> <!-- Acceder a una propiedad computada -->
         <p> {{ description }} </p>
         <p :style="inStock? ' ' : objectStyle ">The item is on sale.</p>
@@ -25,16 +24,14 @@ Vue.component('product', {
 
         <div>
             <!-- Escucha a un clic y ejecuta "addToCart", se deshabilita en caso de que inStock sea falso y se aplica la clase disabled en el mismo caso -->
-            <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Add to
+            <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Add one to
                 cart </button>
+
+                <button v-on:click="unAddFromCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Remove all from cart. </button>
             <!-- Botón con un listener para clics que agrega a la carta -->
             <!-- <button @click="unAddToCart">Unadd to cart</button> this was just a test-->
         </div>
-
-        <div class="cart">
-            <p> {{ cart }}</p> <!-- Se concatena el valor de cart (dentro de app -> Vue) -->
-        </div>
-        <productDetails :details="details"></detail>
+        <productDetails :details="details"></productDetails>
 
         <h2> Variants: </h2>
         <!-- Un for que muestra cada variante -->
@@ -77,11 +74,10 @@ Vue.component('product', {
                     variantId: 2235,
                     variantColor: "blue",
                     variantImage: "./assets/image-blue.png",
-                    variantQuantity: 0
+                    variantQuantity: 7
                 }
 
             ],
-            cart: 0,
             sizes: [
                 {
                     sizeId: 1234,
@@ -103,10 +99,10 @@ Vue.component('product', {
             this.selectedVariant = index;
         },
         addToCart() {
-            this.cart += 1;
+            this.$emit('add-to-cart', this.variants[this.selectedVariant].variantId)
         },
-        unAddToCart() {
-            this.cart -= 1;
+        unAddFromCart() {
+            this.$emit('un-add-to-cart', this.variants[this.selectedVariant].variantId)
         }
     },
     computed: { //Propiedades computadas, el cálculo se realiza sólo cuando alguna dependencia cambia
@@ -159,6 +155,15 @@ Vue.component('productDetails', {
 var app = new Vue({
     el: '#app', //Se define qué etiqueta utilizará Vue para anclarse en el DOM
     data: {
-        premium: true
+        premium: true,
+        cart: []
+    },
+    methods: {
+        updateCart(id) {
+            this.cart.push(id)
+        },
+        removeCart(id) {
+            this.cart = this.cart.filter(thing => thing != id);
+        }
     }
 }) 
