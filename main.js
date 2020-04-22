@@ -27,7 +27,8 @@ Vue.component('product', {
             <button v-on:click="addToCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Add one to
                 cart </button>
 
-                <button v-on:click="unAddFromCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Remove all from cart. </button>
+            <button v-on:click="unAddFromCart" :disabled="!inStock" :class="{ disabledButton : !inStock }"> Remove
+                all from cart. </button>
             <!-- Botón con un listener para clics que agrega a la carta -->
             <!-- <button @click="unAddToCart">Unadd to cart</button> this was just a test-->
         </div>
@@ -48,8 +49,16 @@ Vue.component('product', {
             <!-- For each, se mantiene la clave y se llenan los elementos de la lista -->
             <li v-for="size in sizes" :key="size.sizeId"> {{ size.sizeName }}</li>
         </ul>
+        <h2>Reviews</h2>
+        <p v-if="!reviews.length"> There's no reviews yet. Write the first one!</p>
+        <div v-for="review in reviews">
+            <h3>{{ review.name }} - {{ review.recomended }} </h3>
+            <span> Rating: {{ review.rating }}</span>
+            <p> Review: {{ review.review }}</p>
+        </div>
+        <leaveReview @review-submitted="addReview"></leaveReview>
     </div>
-</div> `,
+</div>`,
     data() {
         return {
             brand: 'Vue Mastery',
@@ -63,8 +72,7 @@ Vue.component('product', {
             },
             inventory: 100,
             details: ["80% cotton", "20% polyester", "Gender-neutral"],
-            variants: [
-                {
+            variants: [{
                     variantId: 2234,
                     variantColor: "green",
                     variantImage: "./assets/image.png",
@@ -78,8 +86,7 @@ Vue.component('product', {
                 }
 
             ],
-            sizes: [
-                {
+            sizes: [{
                     sizeId: 1234,
                     sizeName: "big"
                 },
@@ -92,6 +99,7 @@ Vue.component('product', {
                     sizeName: "extra-extra-big"
                 }
             ],
+            reviews: []
         }
     },
     methods: { //Aquí van los métodos; la notación usada podría no funcinar en todos los navegadores, pero... funciona en Firefox y Safari.
@@ -103,6 +111,9 @@ Vue.component('product', {
         },
         unAddFromCart() {
             this.$emit('un-add-to-cart', this.variants[this.selectedVariant].variantId)
+        },
+        addReview(productReview) {
+            this.reviews.push(productReview)
         }
     },
     computed: { //Propiedades computadas, el cálculo se realiza sólo cuando alguna dependencia cambia
@@ -149,6 +160,84 @@ Vue.component('productDetails', {
     </div>`
 
 })
+
+Vue.component('leaveReview', {
+    template: `
+    <div>
+    <p v-if="errors.length">
+        <b>Invalid review, see errors below.</b>
+        <ul>
+            <li v-for="error in errors"> {{ error }}</li>
+        </ul>
+    </p>
+        <form class="review-form" @submit.prevent="onSubmit">
+            <input v-model="name" type="text" placeholder="Write your name here.">
+            <label>
+                Rating:
+                <input v-model.number="rating" type="range" id="points" name="stars" min="1" max="5">
+            </label>
+            <input v-model="review" type="text" placeholder="Write your review here.">
+
+            Would you recommend this product?
+            <div>
+                <input v-model="recomended" type="radio" id="yes" name="recomended" value="Recomended" >
+                <label for="yes" >Yes</label>
+                <input v-model="recomended" type="radio" id="no" name="recomended" value="Don't recomended">
+                <label for="no">No</label>
+            </div>
+            <input type="submit">
+        </form>
+    </div>`,
+    data() {
+        return {
+            name: null,
+            rating: null,
+            review: null,
+            recomended: null,
+            errors: []
+        }
+    },
+    methods: {
+        onSubmit() {
+            if (this.name && this.review && this.rating) {
+                let productReview = {
+                    name: this.name,
+                    review: this.review,
+                    rating: this.rating,
+                    recomended: this.recomended
+                }
+                this.$emit('review-submitted', productReview)
+                this.name = null
+                this.rating = null
+                this.review = null
+                this.recomended = null
+                this.errors = []
+            } else {
+                this.errors = []
+                if (!this.name) this.errors.push("Missing name.")
+                if (!this.rating) this.errors.push("Missing rating.")
+                if (!this.review) this.errors.push("Missing review .")
+                if (!this.recomended) this.errors.push("Recomended checkbox")
+            }
+        }
+    }
+})
+
+Vue.component('displayReviews', {
+    props: {
+        reviews: {
+            type: Array,
+            required: true
+        }
+    },
+    template: `
+    <div v-for="review in reviews">
+        <h2>{{ review.name }}</h2>
+        <span> Rating: {{ review.rating }}</span>
+        <p> Review: {{ review.review }}</p>
+    </div>
+    `
+})
 /*
     Se define un objeto Vue
 */
@@ -166,4 +255,4 @@ var app = new Vue({
             this.cart = this.cart.filter(thing => thing != id);
         }
     }
-}) 
+})
